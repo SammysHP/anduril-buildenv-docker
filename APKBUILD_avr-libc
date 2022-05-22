@@ -1,0 +1,31 @@
+pkgname=avr-libc
+pkgver=0.0.0_git
+pkgrel=0
+pkgdesc="The C runtime library for the AVR family of microcontrollers"
+url="https://github.com/avrdudes/avr-libc"
+depends="gcc-avr"
+makedepends="autoconf automake"
+arch="all"
+license="BSD 3-Clause"
+subpackages="$pkgname-doc"
+builddir="$srcdir/$pkgname-main"
+source="avr-libc-$pkgver.tar.gz::https://github.com/avrdudes/avr-libc/archive/refs/heads/main.tar.gz"
+
+build() {
+	./bootstrap
+	CC=avr-gcc ./configure \
+		--build="$(/bin/sh config.guess)" \
+		--host=avr \
+		--prefix=/usr
+	make
+}
+
+package() {
+	make install DESTDIR="$pkgdir"
+	if [ -d "$pkgdir"/usr/lib64 ]; then
+		mv "$pkgdir"/usr/lib64/* "$pkgdir"/usr/lib/
+		rmdir "$pkgdir"/usr/lib64
+	fi
+}
+
+sha512sums=""
