@@ -10,22 +10,23 @@ license="BSD 3-Clause"
 subpackages="$pkgname-doc"
 builddir="$srcdir/$pkgname-main"
 source="avr-libc-$pkgver.tar.gz::https://github.com/avrdudes/avr-libc/archive/refs/heads/main.tar.gz"
+options="!check"
 
 build() {
-	./bootstrap
-	CC=avr-gcc ./configure \
-		--build="$(/bin/sh config.guess)" \
-		--host=avr \
-		--prefix=/usr
-	make
+  ./bootstrap
+  CC=avr-gcc ./configure \
+    --build="$(/bin/sh config.guess)" \
+    --host=avr \
+    --prefix=/usr
+  make
 }
 
 package() {
-	make install DESTDIR="$pkgdir"
-	if [ -d "$pkgdir"/usr/lib64 ]; then
-		mv "$pkgdir"/usr/lib64/* "$pkgdir"/usr/lib/
-		rmdir "$pkgdir"/usr/lib64
-	fi
+  make install DESTDIR="$pkgdir"
+  if [ -d "$pkgdir"/usr/lib64 ]; then
+    mv "$pkgdir"/usr/lib64/* "$pkgdir"/usr/lib/
+    rmdir "$pkgdir"/usr/lib64
+  fi
 }
 
 sha512sums=""

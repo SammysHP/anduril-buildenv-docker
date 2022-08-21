@@ -1,21 +1,21 @@
-FROM alpine:latest AS avr-libc-builder
+FROM alpine:3.15 AS avr-libc-builder
 
-RUN apk update && \
-  apk --no-cache add gcc-avr alpine-sdk sudo python3 && \
-  ln -s /usr/bin/python3 /usr/bin/python && \
-  abuild-keygen -ain
+RUN apk update \
+  && apk --no-cache add gcc-avr alpine-sdk sudo python3 \
+  && ln -s /usr/bin/python3 /usr/bin/python \
+  && abuild-keygen -ain
 
 COPY APKBUILD_avr-libc /avr-libc-git/APKBUILD
 WORKDIR /avr-libc-git/
-RUN abuild -F checksum && \
-  abuild -rF
+RUN abuild -F checksum \
+  && abuild -rF
 
 
 
-FROM alpine:latest
+FROM alpine:3.15
 
-COPY --from=avr-libc-builder /root/packages/x86_64/avr-libc*.apk /tmp/avr-libc/
-RUN apk --no-cache --allow-untrusted add bash perl make /tmp/avr-libc/*.apk
+RUN --mount=from=avr-libc-builder,source=/root/packages,target=/packages \
+  apk --no-cache --allow-untrusted add bash perl make /packages/*/avr-libc*.apk
 
 ENV ATTINY_DFP=/not/existing
 RUN mkdir -p /src/ToyKeeper/spaghetti-monster/anduril
