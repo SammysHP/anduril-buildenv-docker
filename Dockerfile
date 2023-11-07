@@ -17,7 +17,5 @@ FROM alpine:3.15
 RUN --mount=from=avr-libc-builder,source=/root/packages,target=/packages \
   apk --no-cache --allow-untrusted add bash perl make /packages/*/avr-libc*.apk
 
-ENV ATTINY_DFP=/not/existing
-RUN mkdir -p /src/ToyKeeper/spaghetti-monster/anduril
-WORKDIR /src/ToyKeeper/spaghetti-monster/anduril
-ENTRYPOINT ["./build-all.sh"]
+WORKDIR /src
+ENTRYPOINT ["./make"]
