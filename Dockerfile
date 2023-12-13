@@ -15,7 +15,9 @@ RUN abuild -F checksum \
 FROM alpine:3.15
 
 RUN --mount=from=avr-libc-builder,source=/root/packages,target=/packages \
-  apk --no-cache --allow-untrusted add bash perl make /packages/*/avr-libc*.apk
+  apk --no-cache --allow-untrusted add bash git make perl /packages/*/avr-libc*.apk
+
+RUN git config --system --add safe.directory /src
 
 WORKDIR /src
 ENTRYPOINT ["./make"]
